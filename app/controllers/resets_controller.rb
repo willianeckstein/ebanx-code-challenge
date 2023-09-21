@@ -1,5 +1,6 @@
 class ResetsController < ApplicationController
   def clean_session
-    puts "Clean session"
+    reset_session
+    render status: :ok  
   end
 end
