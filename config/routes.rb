@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  post "/reset", to: "resets#clean_session"
+
+  get "/balance", to: "balances#show"
+
+  post "/event", to: "events#create"
 end
