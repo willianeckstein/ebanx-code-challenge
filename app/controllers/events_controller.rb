@@ -2,68 +2,21 @@ class EventsController < ApplicationController
   def create 
     case create_params[:type]
     when "deposit"
-      if session[create_params[:destination]].blank?
-        session[create_params[:destination]] = create_params[:amount]
-
-        response = {
-          "destination" => {
-            "id" => create_params[:destination],
-            "balance" => session[create_params[:destination]]
-          }
-        }
-    
-        render json: response, status: :created
-      else
-        session[create_params[:destination]] = session[create_params[:destination]] + create_params[:amount]
-
-        response = {
-          "destination" => {
-            "id" => create_params[:destination],
-            "balance" => session[create_params[:destination]]
-          }
-        }
-    
-        render json: response, status: :created
-      end
+      deposit_handler(create_params[:destination], create_params[:amount])
+      render json: deposit_response(create_params[:destination]), status: :created
     when "withdraw"
-      if session[create_params[:destination]].blank?
+      if session[create_params[:origin]].blank?
         render json: 0, status: :not_found
       else
-        session[create_params[:destination]] = session[create_params[:destination]] - create_params[:amount]
-
-        response = {
-          "origin" => {
-            "id" => create_params[:destination],
-            "balance" => session[create_params[:destination]]
-          }
-        }
-    
-        render json: response, status: :created
+        withdraw_handler(create_params[:origin], create_params[:amount])    
+        render json: withdraw_response(create_params[:origin]), status: :created
       end
     when "transfer"
       if session[create_params[:origin]].blank?
         render json: 0, status: :not_found
       else
-        session[create_params[:origin]] = session[create_params[:origin]] - create_params[:amount]
-
-        if session[create_params[:destination]].blank?
-          session[create_params[:destination]] = create_params[:amount]
-        else
-          session[create_params[:destination]] = session[create_params[:destination]] + create_params[:amount]
-        end
-
-        response = {
-          "origin" => {
-            "id" => create_params[:origin],
-            "balance" => session[create_params[:origin]]
-          },
-          "destination" => {
-            "id" => create_params[:destination],
-            "balance" => session[create_params[:destination]]
-          }
-        }
-    
-        render json: response, status: :created
+        transfer_handler(create_params[:origin], create_params[:destination], create_params[:amount])    
+        render json: transfer_response(create_params[:origin], create_params[:destination]), status: :created
       end
     end
  
@@ -73,5 +26,59 @@ class EventsController < ApplicationController
 
   def create_params
     params.require(:event).permit(:type, :destination, :amount, :origin) 
+  end
+
+  def deposit_handler(destination, amount) 
+    if session[destination].blank?
+      session[destination] = amount
+    else
+      session[destination] = session[destination] + amount
+    end
+  end
+
+  def withdraw_handler(origin, amount) 
+    session[origin] = session[origin] - amount
+  end
+
+  def transfer_handler(origin, destination, amount)
+    withdraw_handler(origin, amount)
+    deposit_handler(destination, amount)
+  end
+
+  def deposit_response(destination)
+    response = {
+      "destination" => {
+        "id" => destination,
+        "balance" => session[destination]
+      }
+    }
+
+    response
+  end
+
+  def withdraw_response(origin)
+    response = {
+      "origin" => {
+        "id" => origin,
+        "balance" => session[origin]
+      }
+    }
+
+    response
+  end
+
+  def transfer_response(origin, destination)
+    response = {
+      "origin" => {
+        "id" => origin,
+        "balance" => session[origin]
+      },
+      "destination" => {
+        "id" => destination,
+        "balance" => session[destination]
+      }
+    }
+
+    response
   end
 end
