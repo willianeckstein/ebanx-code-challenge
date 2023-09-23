@@ -44,6 +44,8 @@ Rails.application.configure do
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []
 
+  config.hosts << "3610-2001-1284-f514-9932-65d1-1788-26c7-4e66.ngrok-free.app"
+
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true

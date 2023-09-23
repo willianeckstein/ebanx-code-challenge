@@ -1,24 +1,31 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Dependencies:
 
-Things you may want to cover:
+- Ruby 3.2.2
+- Rails 7.0.8
 
-* Ruby version
+To start de development server:
 
-* System dependencies
+```
+rails server
+```
 
-* Configuration
+If you want to start in production mode
 
-* Database creation
+```
+rails server -e production
+```
 
-* Database initialization
+If you want to change the port of the server
 
-* How to run the test suite
+```
+rails server -p PORT_NUMBER
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+If you run it with Ngrock on development mode, you need to change the host configuration in de the config/environments/development.rb file:
 
-* Deployment instructions
+```
+config.hosts << THE_HOST_URL
+```
 
-* ...
