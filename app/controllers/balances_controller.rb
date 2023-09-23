@@ -1,12 +1,9 @@
 class BalancesController < ApplicationController
   def show
-    account = session.dig("accounts", params[:account_id]) unless !session[:accounts]
-
-    if !account
+    if session[params[:account_id]].blank?
       render json: 0, status: :not_found 
     else
-      render json: account
-    end
-    
+      render json: session[params[:account_id]], status: :ok
+    end    
   end
 end
